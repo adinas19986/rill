@@ -1,0 +1,14 @@
+{
+  "name": "ouways-monorepo",
+  "private": true,
+  "packageManager": "pnpm@11.1.2",
+  "scripts": {
+    "build": "pnpm --filter ouways-sdk build",
+    "web": "pnpm --filter web dev",
+    "test:contracts": "cd contracts && forge test",
+    "e2e": "node --import tsx packages/ouways-sdk/scripts/e2e.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.0"
+  }
+}

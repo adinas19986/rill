@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  --color-canvas: oklch(0.975 0.01 210);
+  --color-surface: oklch(1 0 0);
+  --color-surface-2: oklch(0.96 0.012 205);
+  --color-ink: oklch(0.21 0.02 220);
+  --color-muted: oklch(0.47 0.02 220);
+  --color-border: oklch(0.9 0.014 210);
+  --color-accent: oklch(0.64 0.12 195);
+  --color-accent-strong: oklch(0.52 0.11 200);
+  --color-accent-ink: oklch(0.99 0.01 195);
+  --color-ok: oklch(0.6 0.13 160);
+  --color-warn: oklch(0.62 0.17 30);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-canvas: oklch(0.23 0.012 220);
+  --color-surface: oklch(0.27 0.014 220);
+  --color-surface-2: oklch(0.3 0.016 220);
+  --color-ink: oklch(0.94 0.008 210);
+  --color-muted: oklch(0.72 0.018 215);
+  --color-border: oklch(0.36 0.016 220);
+  --color-accent: oklch(0.72 0.11 195);
+  --color-accent-strong: oklch(0.64 0.12 198);
+  --color-accent-ink: oklch(0.17 0.02 220);
+}
+
+html {
+  background: var(--color-canvas);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-weight: 500;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--color-accent) 26%, transparent);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "ss01", "tnum";
+}
+
+.bloom {
+  background:
+    radial-gradient(55% 55% at 80% 6%, color-mix(in oklch, var(--color-accent) 20%, transparent), transparent 70%),
+    radial-gradient(45% 45% at 6% 26%, color-mix(in oklch, var(--color-accent-strong) 12%, transparent), transparent 72%);
+}
+
+.btn-anim {
+  transition: transform 0.09s var(--ease-out-quart), background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.btn-anim:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* Streaming flow bar: an animated gradient moving left to right. */
+.flow {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-accent-strong),
+    var(--color-accent),
+    var(--color-accent-strong)
+  );
+  background-size: 200% 100%;
+  animation: flow-move 2.2s linear infinite;
+}
+@keyframes flow-move {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.6s var(--ease-out-expo) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow {
+    animation: none;
+  }
+  .rise {
+    animation: none;
+  }
+}
