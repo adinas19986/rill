@@ -1,31 +1,23 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const jakarta = Plus_Jakarta_Sans({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-bricolage",
 });
 
 export const metadata: Metadata = {
-  title: "ouways, USDC payment streams on Arc",
-  description: "Stream USDC by the second on Arc. Payroll, vesting, and grants that flow continuously.",
+  title: "Rill, USDC that flows by the second",
+  description: "Rill streams USDC continuously on Arc. Payroll, vesting, and grants that move like a current, not a lump sum.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{var t=localStorage.getItem('theme');var d=t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches;document.documentElement.classList.toggle('dark',d)}catch(e){}",
-          }}
-        />
-      </head>
-      <body className={`${jakarta.variable} antialiased`}>
+    <html lang="en">
+      <body className={bricolage.variable}>
         <Providers>{children}</Providers>
       </body>
     </html>

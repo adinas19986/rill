@@ -24,87 +24,91 @@ export function CreateStream({ onCreated }: { onCreated: (id: bigint) => void })
   const [duration, setDuration] = useState(3600);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
+  const rate = Number(amount || "0") / duration;
+
   async function submit() {
     if (!publicClient || !walletClient || !address) return;
     if (!isAddress(recipient)) {
       setStatus({ kind: "err", msg: "Enter a valid recipient address." });
       return;
     }
-    setStatus({ kind: "busy", msg: "Approving and creating the stream…" });
+    setStatus({ kind: "busy", msg: "Approving and opening the stream…" });
     try {
       const now = Math.floor(Date.now() / 1000);
       const { streamId } = await createStream(
         { net, publicClient, walletClient, account: address },
-        {
-          recipient: recipient as Address,
-          deposit: parseUnits(amount, 6),
-          startTime: now,
-          stopTime: now + duration,
-        },
+        { recipient: recipient as Address, deposit: parseUnits(amount, 6), startTime: now, stopTime: now + duration },
       );
       setStatus({ kind: "idle" });
       onCreated(streamId);
     } catch (e) {
       const m = e instanceof Error ? e.message : String(e);
-      setStatus({ kind: "err", msg: /rejected|denied/i.test(m) ? "Rejected in wallet." : m.slice(0, 160) });
+      setStatus({ kind: "err", msg: /rejected|denied/i.test(m) ? "Rejected in wallet." : m.slice(0, 150) });
     }
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6">
-      <h3 className="text-lg font-extrabold tracking-tight">Open a stream</h3>
-      <p className="mt-1 text-[14px] text-[var(--color-muted)]">
-        Lock USDC that flows to the recipient every second.
-      </p>
+    <div className="panel rounded-3xl p-6">
+      <h3 className="text-[22px] font-extrabold tracking-tight">Open a stream</h3>
+      <p className="mt-1 text-[14px] text-[var(--color-muted)]">USDC that flows every second until it runs dry.</p>
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-6 space-y-5">
         <Field label="Recipient">
           <input
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
             placeholder="0x…"
             spellCheck={false}
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 font-mono text-[13px] outline-none focus:border-[var(--color-accent)]"
+            className="mono w-full rounded-xl border border-[var(--color-line)] bg-[var(--color-canvas-2)] px-4 py-3 text-[13px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-mint)]"
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Amount (USDC)">
+        <Field label="Amount (USDC)">
+          <div className="flex items-center rounded-xl border border-[var(--color-line)] bg-[var(--color-canvas-2)] px-4 focus-within:border-[var(--color-mint)]">
             <input
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               inputMode="decimal"
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 font-mono text-[14px] outline-none focus:border-[var(--color-accent)]"
+              className="mono w-full bg-transparent py-3 text-[20px] font-bold text-[var(--color-ink)] outline-none"
             />
-          </Field>
-          <Field label="Duration">
-            <div className="flex gap-1.5">
-              {DURATIONS.map((d) => (
-                <button
-                  key={d.secs}
-                  onClick={() => setDuration(d.secs)}
-                  className={`btn-anim flex-1 rounded-md border px-2 py-2 text-[12px] font-semibold ${
-                    duration === d.secs
-                      ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted)]"
-                  }`}
-                >
-                  {d.label}
-                </button>
-              ))}
-            </div>
-          </Field>
+            <span className="mono text-[13px] text-[var(--color-muted)]">USDC</span>
+          </div>
+        </Field>
+
+        <Field label="Over">
+          <div className="grid grid-cols-3 gap-2">
+            {DURATIONS.map((d) => (
+              <button
+                key={d.secs}
+                onClick={() => setDuration(d.secs)}
+                className={`btn rounded-xl border px-2 py-2.5 text-[13px] font-bold ${
+                  duration === d.secs
+                    ? "border-transparent bg-[var(--color-mint)] text-[var(--color-canvas)]"
+                    : "border-[var(--color-line)] bg-[var(--color-canvas-2)] text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+                }`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </Field>
+
+        <div className="flex items-center justify-between rounded-xl bg-[var(--color-canvas-2)] px-4 py-3">
+          <span className="text-[13px] text-[var(--color-muted)]">Flow rate</span>
+          <span className="mono text-[14px] font-bold value-gradient">
+            {rate > 0 ? `${rate.toFixed(rate < 0.01 ? 6 : 4)} USDC/s` : "—"}
+          </span>
         </div>
 
         <button
           onClick={submit}
           disabled={status.kind === "busy" || !address}
-          className="btn-anim w-full rounded-md bg-[var(--color-accent)] px-4 py-2.5 text-[15px] font-semibold text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-strong)] disabled:opacity-50"
+          className="btn mint-glow w-full rounded-xl bg-[var(--color-mint)] px-4 py-3.5 text-[15px] font-bold text-[var(--color-canvas)] disabled:opacity-40 disabled:shadow-none"
         >
-          {status.kind === "busy" ? "Creating…" : address ? "Create stream" : "Connect a wallet first"}
+          {status.kind === "busy" ? "Opening…" : address ? "Start streaming" : "Connect a wallet first"}
         </button>
         {status.kind === "err" && (
-          <p className="text-[13px]" style={{ color: "var(--color-warn)" }}>
+          <p className="text-[13px] font-semibold" style={{ color: "var(--color-warn)" }}>
             {status.msg}
           </p>
         )}
@@ -116,7 +120,7 @@ export function CreateStream({ onCreated }: { onCreated: (id: bigint) => void })
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[12px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+      <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-muted)]">
         {label}
       </span>
       {children}

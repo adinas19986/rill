@@ -1,4 +1,4 @@
-# ouways
+# Rill
 
 Continuous USDC payment streams on Arc. Lock USDC once and it vests to the
 recipient linearly, every second, instead of arriving as a lump sum. Built for
