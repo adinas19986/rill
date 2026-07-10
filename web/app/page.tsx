@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { CreateStream } from "@/components/CreateStream";
 import { StreamCard } from "@/components/StreamCard";
 import { FlowField } from "@/components/FlowField";
+import { Faq, HowItWorks, Reveal, SiteFooter, UseCases } from "@/components/marketing";
 import { net } from "@/lib/config";
 
 const KEY = "rill.streams";
@@ -32,9 +32,9 @@ export default function Home() {
   const remove = useCallback((id: bigint) => persist(ids.filter((x) => x !== id)), [ids, persist]);
 
   return (
-    <div className="relative min-h-dvh">
-      {/* Hero with the live current behind it */}
-      <section className="relative overflow-hidden">
+    <main>
+      {/* Hero, pulled up behind the sticky nav so the current runs full-bleed */}
+      <section className="relative -mt-[60px] overflow-hidden">
         <div className="absolute inset-0">
           <FlowField />
         </div>
@@ -42,21 +42,12 @@ export default function Home() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, transparent 40%, var(--color-canvas) 96%), radial-gradient(120% 80% at 50% -10%, transparent 40%, color-mix(in oklch, var(--color-canvas) 60%, transparent))",
+              "linear-gradient(180deg, transparent 42%, var(--color-canvas) 97%), radial-gradient(120% 80% at 50% -10%, transparent 40%, color-mix(in oklch, var(--color-canvas) 55%, transparent))",
           }}
           aria-hidden
         />
-
-        <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
-          <header className="flex items-center justify-between py-6">
-            <div className="flex items-center gap-2.5">
-              <Mark />
-              <span className="text-[18px] font-extrabold tracking-tight">Rill</span>
-            </div>
-            <ConnectButton showBalance={false} chainStatus="icon" />
-          </header>
-
-          <div className="rise max-w-3xl py-16 sm:py-24">
+        <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-[128px] sm:px-8 sm:pb-24 sm:pt-[168px]">
+          <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-1 text-[12px] font-semibold text-[var(--color-mint)] backdrop-blur">
               <span className="pulse h-1.5 w-1.5 rounded-full bg-[var(--color-mint)]" />
               Live on {net.name}
@@ -78,63 +69,60 @@ export default function Home() {
               >
                 Open a stream
               </a>
-              <span className="mono flex items-center gap-2 text-[13px] text-[var(--color-muted)]">
-                {short(net.streamPay)}
-                <span className="inline-block h-1 w-1 rounded-full bg-[var(--color-muted)]" />
-                per-second vesting
-              </span>
+              <a
+                href="#how"
+                className="btn rounded-full border border-[var(--color-line)] px-6 py-3 text-[15px] font-bold text-[var(--color-ink)] hover:border-[var(--color-mint)]"
+              >
+                How it works
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* App */}
-      <section id="app" className="relative mx-auto max-w-6xl scroll-mt-8 px-5 pb-24 sm:px-8">
-        <div className="grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-          <CreateStream onCreated={add} />
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-[20px] font-bold tracking-tight">Your streams</h2>
-              <span className="mono text-[12px] text-[var(--color-muted)]">{ids.length} tracked</span>
-            </div>
-            {!isConnected ? (
-              <Empty>Connect a wallet on {net.name} to open and track streams.</Empty>
-            ) : ids.length === 0 ? (
-              <Empty>No streams yet. Open one and watch it fill, live, right here.</Empty>
-            ) : (
-              <div className="space-y-4">
-                {ids.map((id) => (
-                  <StreamCard key={id.toString()} id={id} onGone={remove} />
-                ))}
+      <HowItWorks />
+      <UseCases />
+
+      {/* Try it: the live app */}
+      <section id="app" className="scroll-mt-20 border-t border-[var(--color-line)]">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+          <Reveal>
+            <div className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em] text-[var(--color-mint)]">Try it live</div>
+            <h2 className="max-w-[20ch] text-[clamp(2rem,4.5vw,3.2rem)] font-extrabold leading-[1.02] tracking-[-0.03em]">
+              Open a real stream on {net.name}.
+            </h2>
+          </Reveal>
+          <div className="mt-10 grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+            <CreateStream onCreated={add} />
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-[20px] font-bold tracking-tight">Your streams</h3>
+                <span className="mono text-[12px] text-[var(--color-muted)]">{ids.length} tracked</span>
               </div>
-            )}
+              {!isConnected ? (
+                <Empty>Connect a wallet on {net.name} to open and track streams.</Empty>
+              ) : ids.length === 0 ? (
+                <Empty>No streams yet. Open one and watch it fill, live, right here.</Empty>
+              ) : (
+                <div className="space-y-4">
+                  {ids.map((id) => (
+                    <StreamCard key={id.toString()} id={id} onGone={remove} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        <footer className="mt-20 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-line)] pt-6 text-[13px] text-[var(--color-muted)] sm:flex-row sm:items-center">
-          <span className="flex items-center gap-2">
-            <Mark size={16} /> <span className="font-bold text-[var(--color-ink)]">Rill</span> USDC streams on Arc
-          </span>
-          <span className="mono">StreamPay {short(net.streamPay)}</span>
-        </footer>
       </section>
-    </div>
+
+      <Faq />
+      <SiteFooter streamPay={net.streamPay} />
+    </main>
   );
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <div className="panel rounded-2xl px-6 py-12 text-center text-[14px] text-[var(--color-muted)]">
-      {children}
-    </div>
-  );
-}
-
-function Mark({ size = 26 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
-      <path d="M3 20c5 0 5-8 10-8s5 8 10 8 6-8 6-8" stroke="var(--color-mint)" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M3 13c5 0 5-6 10-6s5 6 10 6 6-6 6-6" stroke="var(--color-amber)" strokeWidth="1.8" strokeLinecap="round" opacity="0.7" />
-    </svg>
+    <div className="panel rounded-3xl px-6 py-12 text-center text-[14px] text-[var(--color-muted)]">{children}</div>
   );
 }
