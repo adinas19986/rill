@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "SDK for StreamPay: USDC payment streams on Arc",
   "license": "MIT",
+  "author": "Adinas01",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adinas19986/rill.git",
+    "directory": "packages/ouways-sdk"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
