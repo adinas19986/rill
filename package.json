@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm --filter ouways-sdk build",
     "web": "pnpm --filter web dev",
+    "test": "pnpm --filter ouways-sdk test",
     "test:contracts": "cd contracts && forge test",
     "e2e": "node --import tsx packages/ouways-sdk/scripts/e2e.ts"
   },
