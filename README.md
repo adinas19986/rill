@@ -1,5 +1,8 @@
 # Rill
 
+[![CI](https://github.com/adinas19986/rill/actions/workflows/ci.yml/badge.svg)](https://github.com/adinas19986/rill/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3ddc97.svg)](LICENSE)
+
 Continuous USDC payment streams on Arc. Lock USDC once and it vests to the
 recipient linearly, every second, instead of arriving as a lump sum. Built for
 payroll, vesting, and grants, where the money should move at the same rate the
